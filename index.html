@@ -15,9 +15,9 @@
 				width: 100vw;
 				position: relative;
 			}
-			.body .frame{
-				background-color: red;
-				height: 100%;
+			#frame{
+				height: 0;
+				widows: 0;
 			}
 			.capture{
 				position: absolute;
@@ -38,28 +38,104 @@
 				background-color: red;
 				transition: .5s ease all;
 			}
+			#frame:-webkit-full-screen {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+			}
+			#frame:-moz-full-screen {
+				margin: 0;
+			}
+			#frame:-ms-fullscreen {
+				margin: 0;
+			}
+			/* W3C proposal that will eventually come in all browsers */
+			#frame:fullscreen {
+				margin: 0;
+			}
+			#go-button{
+				background-color: red;
+				padding: 16px;
+				border: none;
+				border-radius: 12px;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="body">
-			<div class="frame" id="frame">
-				<iframe src="https://mywebar.com/p/Project_0_6qj9vyih45?_ga=2.245542721.498771656.1659445481-2054939137.1658754356" width="100%" height="100%" frameborder="0"  allow="camera"></iframe>
-			</div>
-			<div class="capture">
-				<div class="btn-capture" onclick="capture()"></div>
+			<div class="frame">
+				<iframe id="frame" src="https://mywebar.com/p/Project_0_6qj9vyih45?_ga=2.245542721.498771656.1659445481-2054939137.1658754356" frameborder="0" allow="camera"></iframe>
 			</div>
 		</div>
+		<div class="capture">
+			<button id="go-button">Buka Camera</button>
+		</div>
 		<!-- https://github.com/niklasvh/html2canvas -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.4/html2canvas.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.4/html2canvas.min.js"></script>
 		<script>
+		var frame =$("#frame");
 		function capture () {
-		html2canvas(document.getElementById("frame")).then((canvas) => {
+		console.log(frame);
+		html2canvas(frame).then(function(canvas){
+		const image = canvas.toDataURL('image/png');
 		let a = document.createElement("a");
 		a.download = "kampung-multiverse.png";
-		a.href = canvas.toDataURL("image/png");
-		a.click(); // MAY NOT ALWAYS WORK!
+		a.href = image;
+		a.click();
 		});
 		}
+		
+		</script> -->
+		<script>
+			/* Get into full screen */
+			function GoInFullscreen(element) {
+				if(element.requestFullscreen)
+					element.requestFullscreen();
+				else if(element.mozRequestFullScreen)
+					element.mozRequestFullScreen();
+				else if(element.webkitRequestFullscreen)
+					element.webkitRequestFullscreen();
+				else if(element.msRequestFullscreen)
+					element.msRequestFullscreen();
+			}
+			/* Get out of full screen */
+			function GoOutFullscreen() {
+				if(document.exitFullscreen)
+					document.exitFullscreen();
+				else if(document.mozCancelFullScreen)
+					document.mozCancelFullScreen();
+				else if(document.webkitExitFullscreen)
+					document.webkitExitFullscreen();
+				else if(document.msExitFullscreen)
+					document.msExitFullscreen();
+			}
+			/* Is currently in full screen or not */
+			function IsFullScreenCurrently() {
+				var full_screen_element = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || null;
+				
+				// If no element is in full-screen
+				if(full_screen_element === null)
+					return false;
+				else
+					return true;
+			}
+			$("#go-button").on('click', function() {
+				if(IsFullScreenCurrently())
+					GoOutFullscreen();
+				else
+					GoInFullscreen($("#frame").get(0));
+			});
+			$(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function() {
+				if(IsFullScreenCurrently()) {
+					// $("#element iframe").text('Full Screen Mode Enabled');
+					$("#go-button").text('Buka Camera');
+				}
+				else {
+					// $("#element iframe").text('Full Screen Mode Disabled');
+					$("#go-button").text('Buka Camera');
+				}
+			});
 		</script>
 		
 	</body>
